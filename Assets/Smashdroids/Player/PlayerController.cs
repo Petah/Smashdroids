@@ -12,12 +12,11 @@ public class PlayerController : MonoBehaviour {
     }
 
     public void Update() {
-        if (Input.GetButtonDown("Fire1")) {
-            foreach (GameObject muzzle in ship.muzzles) {
-                muzzle.GetComponent<Muzzle>().gun.Fire();
-            }
-        }
         transform.position = ship.transform.position;
+		
+        if (Input.GetButtonDown("Fire1")) {
+            ship.Fire();
+        }
     }
 
 }
