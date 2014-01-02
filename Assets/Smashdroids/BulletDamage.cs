@@ -11,6 +11,7 @@ public class BulletDamage : MonoBehaviour {
 	public void FixedUpdate() {
 		Vector3 forward = transform.TransformDirection(Vector3.forward);
 		RaycastHit hit;
+		
 		if (Physics.Raycast(transform.position, forward, out hit, speed)) {
 			this.Hit(hit.transform.gameObject, hit.point);
 		} else {

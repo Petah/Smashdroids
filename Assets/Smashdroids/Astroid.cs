@@ -1,13 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AstroidDamage : MonoBehaviour {
+public class Astroid : MonoBehaviour {
 	
 	public static GameObject astroid;
 	public static float accelerationForce = 500;
 	public static float rotationForce = 500;
 	private float health = 20;
 	private float size = 1;
+	
+	public static Astroid SpawnAt(Vector3 position) {
+		Astroid clone = Instantiate(astroid, position, Quaternion.identity) as Astroid;
+		return clone;
+	}
 		
 	public static void Generate(MersenneTwister random, Vector3 position) {
 		GameObject clone = Instantiate(astroid, position, Quaternion.identity) as GameObject;

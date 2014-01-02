@@ -12,32 +12,44 @@ public class SetupField : MonoBehaviour {
 	private int counter = 0;
 	private MersenneTwister random;
 	
-	public void Start() {
-		random = new MersenneTwister(1);
+	public void InitialiseZone(int x, int y) {
+		x += 10000;
+		y += 10000;
+		uint seed = (uint)(x + (1000 * y));
+		MersenneTwister random = new MersenneTwister(seed);
 		while (counter < asteroidCount) {
-			Vector3 randomPosition = new Vector3(
+			Vector3 position = new Vector3(
                 random.Range(-fieldRange, fieldRange),
                 0,
                 random.Range(-fieldRange, fieldRange)
             );
-
-			GameObject clone = Instantiate(asteroidPrefab, randomPosition, Quaternion.identity) as GameObject;
-			//clone.transform.parent = transform;
 			
-			clone.rigidbody.AddForce(
-				random.GenerateFloat() * accelerationForce, 
-				0, 
-				random.GenerateFloat() * accelerationForce
-			);
-			
-			clone.rigidbody.AddTorque(
-				random.GenerateFloat() * rotationForce, 
-				random.GenerateFloat() * rotationForce, 
-				random.GenerateFloat() * rotationForce
-			);
-
-			counter++;
+			Astroid.SpawnAt(position);
 		}
+		Debug.Log(seed);
+	}
+	
+	public void Start() {
+		InitialiseZone(1, 1);
+//		while (counter < asteroidCount) {
+//
+//			GameObject clone = Instantiate(asteroidPrefab, randomPosition, Quaternion.identity) as GameObject;
+//			//clone.transform.parent = transform;
+//			
+//			clone.rigidbody.AddForce(
+//				random.GenerateFloat() * accelerationForce, 
+//				0, 
+//				random.GenerateFloat() * accelerationForce
+//			);
+//			
+//			clone.rigidbody.AddTorque(
+//				random.GenerateFloat() * rotationForce, 
+//				random.GenerateFloat() * rotationForce, 
+//				random.GenerateFloat() * rotationForce
+//			);
+//
+//			counter++;
+//		}
 	}
 
 }
