@@ -265,4 +265,13 @@ public class MersenneTwister {
 		return min + (GenerateFloat() * ((max - min) + 1));
 	}
 
+	public float Range(float start, float end, bool allowNegative) {
+		var min = Math.Min(start, end);
+		var max = Math.Max(start, end);
+		if (allowNegative && GenerateDouble() < 0.5) {
+			return -(min + (GenerateFloat() * ((max - min) + 1)));
+		}
+		return min + (GenerateFloat() * ((max - min) + 1));
+	}
+
 }
