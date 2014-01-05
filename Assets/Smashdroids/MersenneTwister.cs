@@ -60,6 +60,7 @@
 
 #endregion 
 using System;
+using UnityEngine;
 
 public class MersenneTwister {
 	
@@ -260,14 +261,14 @@ public class MersenneTwister {
 	/* These real versions are due to Isaku Wada, 2002/01/09 added */
 	
 	public float Range(float start, float end) {
-		var min = Math.Min(start, end);
-		var max = Math.Max(start, end);
+		var min = Mathf.Min(start, end);
+		var max = Mathf.Max(start, end);
 		return min + (GenerateFloat() * ((max - min) + 1));
 	}
 
 	public float Range(float start, float end, bool allowNegative) {
-		var min = Math.Min(start, end);
-		var max = Math.Max(start, end);
+		var min = Mathf.Min(start, end);
+		var max = Mathf.Max(start, end);
 		if (allowNegative && GenerateDouble() < 0.5) {
 			return -(min + (GenerateFloat() * ((max - min) + 1)));
 		}

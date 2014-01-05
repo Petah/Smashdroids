@@ -4,15 +4,15 @@ using System.Collections;
 public class SetupField : MonoBehaviour {
 
 	public GameObject asteroidPrefab;
-	public float fieldRange = 100;
+	public int fieldRange = 100;
 	public float seed = 100;
 	public float accelerationForce = 500;
 	public float rotationForce = 500;
 	private MersenneTwister random;
 	
 	public void InitialiseZone(int x, int y) {
-		x *= 2000;
-		y *= 2000;
+		x *= fieldRange;
+		y *= fieldRange;
 		uint seed = (uint)(x + (1000 * y));
 		MersenneTwister random = new MersenneTwister(seed);
 		for (var i = 0; i < 5; i++) {

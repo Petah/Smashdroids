@@ -4,10 +4,8 @@ using System.Collections;
 public class Asteroid : MonoBehaviour {
     
     private float health = 20;
-    private float size = 1;
     
     // Deform properties
-    private float deformAmount = 0.3f;
     private MeshFilter meshfilter;
     private Mesh sourceMesh;
     
@@ -20,21 +18,24 @@ public class Asteroid : MonoBehaviour {
     public void Update() {
         if (health < 0) {
             if (transform.localScale.x > 0.2) {
-                for (int i = 0; i < 3; i++) {
-                    Transform clone = Instantiate(transform, transform.position, Quaternion.identity) as Transform;
-
-                    Vector3 scale = transform.localScale;
-                    scale.x /= 2;
-                    scale.y /= 2;
-                    scale.z /= 2;
-                    clone.localScale = scale;
-                }
+                Explode();
+            } else {
+                Destroy(gameObject);
             }
-            Destroy(gameObject);
         }
     }
 
     public void Explode() {
+        for (int i = 0; i < 3; i++) {
+            Transform clone = Instantiate(transform, transform.position, Quaternion.identity) as Transform;
+
+            Vector3 scale = transform.localScale;
+            scale.x /= 2;
+            scale.y /= 2;
+            scale.z /= 2;
+            clone.localScale = scale;
+        }
+        Destroy(gameObject);
     }
         
     public void Damage(float damage) {
@@ -55,17 +56,16 @@ public class Asteroid : MonoBehaviour {
             transform.position.z * 10000
         );
         
-        MersenneTwister random = new MersenneTwister();
+        MersenneTwister random = new MersenneTwister(seed);
         
-        float min = 500;
-        float max = 2000;
+        float min = 5;
+        float max = 20;
         rigidbody.AddForce(
             random.Range(min, max, true), 
             0, 
             random.Range(min, max, true)
         );
         
-        float rotationForce = 500;
         rigidbody.AddTorque(
             random.Range(min, max, true), 
             random.Range(min, max, true), 
@@ -82,32 +82,38 @@ public class Asteroid : MonoBehaviour {
         clone.uv = mesh.uv;
         return clone;
     }
-    
+
     public void Deform() {
         Mesh deformedMesh = CloneMesh(sourceMesh);
         
         // Deform working mesh
+        float deformAmount = 0.7f;
         Vector3[] vertices = deformedMesh.vertices;
+        bool[] moved = new bool[vertices.Length];
         for (int i = 0; i < vertices.Length; i++) {
+            if (moved[i]) {
+                continue;
+            }
             Vector3 newPosition = new Vector3();
             newPosition.x = vertices[i].x + Random.Range(-deformAmount, deformAmount);
             newPosition.y = vertices[i].y + Random.Range(-deformAmount, deformAmount);
             newPosition.z = vertices[i].z + Random.Range(-deformAmount, deformAmount);
             for (int j = 0; j < vertices.Length; j++) {
-                if (i == j) {
+                if (i == j || moved[j]) {
                     continue;
                 }
                 if (vertices[i] == vertices[j]) {
+                    moved[j] = true;
                     vertices[j] = newPosition;
                 }
             }
+            moved[i] = true;
             vertices[i] = newPosition;
         }
         deformedMesh.vertices = vertices;
         
         // Apply Laplacian Smoothing filter to mesh
         Mesh workingMesh = CloneMesh(deformedMesh);
-        workingMesh.vertices = SmoothFilter.hcFilter(deformedMesh.vertices, workingMesh.vertices, workingMesh.triangles, 0.0f, 0.5f);
         workingMesh.vertices = SmoothFilter.hcFilter(deformedMesh.vertices, workingMesh.vertices, workingMesh.triangles, 0.0f, 0.5f);
         
         workingMesh.RecalculateBounds();

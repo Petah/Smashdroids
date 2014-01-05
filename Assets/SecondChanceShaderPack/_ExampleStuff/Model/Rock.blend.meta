@@ -1,18 +1,18 @@
 fileFormatVersion: 2
-guid: 753e715d7f6793240820b3f394d6e301
+guid: d4301a80650e7814384fc4aaba2fe4f2
 ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
-    100000: pCube1
-    100002: //RootNode
-    400000: pCube1
-    400002: //RootNode
-    2300000: pCube1
-    3300000: pCube1
-    4300000: pCube1
+    100000: //RootNode
+    400000: //RootNode
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: Cube
+    4300002: Rock
+    7400000: Default Take
     9500000: //RootNode
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
   animations:
@@ -45,7 +45,7 @@ ModelImporter:
     splitTangentsAcrossUV: 1
     normalImportMode: 0
     tangentImportMode: 1
-  importAnimation: 1
+  importAnimation: 0
   copyAvatar: 0
   humanDescription:
     human: []
@@ -61,5 +61,5 @@ ModelImporter:
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   additionalBone: 1
-  animationType: 2
+  animationType: 0
   userData: 
