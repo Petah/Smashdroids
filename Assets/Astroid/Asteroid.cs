@@ -5,9 +5,7 @@ public class Asteroid : MonoBehaviour {
     
     private float health = 20;
     
-    // Deform properties
-    private MeshFilter meshfilter;
-    private Mesh sourceMesh;
+    private Mesh deformedMesh;
     
     public static void SpawnAt(GameObject astroidPrefab, Vector3 position) {
         if (!Physics.CheckSphere(position, 3)) {
@@ -26,7 +24,10 @@ public class Asteroid : MonoBehaviour {
     }
 
     public void Explode() {
-        for (int i = 0; i < 3; i++) {
+        int children = 3;
+        for (int i = 0; i < children; i++) {
+            float positionAround = (2 * Mathf.PI / children) * i;
+
             Transform clone = Instantiate(transform, transform.position, Quaternion.identity) as Transform;
 
             Vector3 scale = transform.localScale;
@@ -34,6 +35,10 @@ public class Asteroid : MonoBehaviour {
             scale.y /= 2;
             scale.z /= 2;
             clone.localScale = scale;
+
+            clone.transform.position = transform.position + new Vector3(Mathf.Cos(positionAround), 0, Mathf.Sin(positionAround));
+
+            clone.rigidbody.AddExplosionForce(100, transform.position, 100);
         }
         Destroy(gameObject);
     }
@@ -43,11 +48,6 @@ public class Asteroid : MonoBehaviour {
     }
     
     public void Start() {
-        // Clone mesh assigned to game object
-        meshfilter = gameObject.GetComponentInChildren<MeshFilter>();
-        sourceMesh = new Mesh();
-        sourceMesh = meshfilter.mesh;
-        
         Deform();
         
         uint seed = (uint)(
@@ -72,20 +72,15 @@ public class Asteroid : MonoBehaviour {
             random.Range(min, max, true)
         );
     }
-    
-    private static Mesh CloneMesh(Mesh mesh) {
-        Mesh clone = new Mesh();
-        clone.vertices = mesh.vertices;
-        clone.normals = mesh.normals;
-        clone.tangents = mesh.tangents;
-        clone.triangles = mesh.triangles;
-        clone.uv = mesh.uv;
-        return clone;
+
+    public void OnDestroy() {
+        Destroy(deformedMesh);
     }
 
     public void Deform() {
-        Mesh deformedMesh = CloneMesh(sourceMesh);
-        
+        MeshFilter meshFilter = gameObject.GetComponentInChildren<MeshFilter>();
+        deformedMesh = meshFilter.mesh;
+
         // Deform working mesh
         float deformAmount = 0.7f;
         Vector3[] vertices = deformedMesh.vertices;
@@ -110,16 +105,15 @@ public class Asteroid : MonoBehaviour {
             moved[i] = true;
             vertices[i] = newPosition;
         }
-        deformedMesh.vertices = vertices;
         
         // Apply Laplacian Smoothing filter to mesh
-        Mesh workingMesh = CloneMesh(deformedMesh);
-        workingMesh.vertices = SmoothFilter.hcFilter(deformedMesh.vertices, workingMesh.vertices, workingMesh.triangles, 0.0f, 0.5f);
-        
-        workingMesh.RecalculateBounds();
-        workingMesh.RecalculateNormals();
-        
-        meshfilter.mesh = workingMesh;
+        Vector3[] workingVertices = deformedMesh.vertices;
+        int[] workingTriangles = deformedMesh.triangles;
+        deformedMesh.vertices = SmoothFilter.hcFilter(vertices, workingVertices, workingTriangles, 0.0f, 0.5f);
+        deformedMesh.triangles = workingTriangles;
+
+        deformedMesh.RecalculateBounds();
+        deformedMesh.RecalculateNormals();
     }
         
 }
